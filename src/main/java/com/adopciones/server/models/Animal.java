@@ -16,11 +16,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Animal {
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -32,61 +33,27 @@ public class Animal {
     private String img_url;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "salud_animal", length =  10, nullable = false)
+    @Column(name = "salud_animal", length = 10, nullable = false)
     private SaludEnum salud_animal;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "sexo_animal", length =  10, nullable = false)
+    @Column(name = "sexo_animal", length = 10, nullable = false)
     private SexoEnum sexo_animal;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "disponibilidad", length =  10, nullable = false)
+    @Column(name = "disponibilidad", length = 10, nullable = false)
     private DisponibilidadEnum disponibilidad;
 
+    // Relaciones
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "especie_id")
     private Especie especie;
 
+    @OneToOne
+    @JoinColumn(name = "adopcion_id")
+    private Adopcion adopcion;
 
 
-    public Especie getEspecie() {
-        return this.especie;
-    }
-
-    public void setEspecie(Especie especie) {
-        this.especie = especie;
-    }
-
-    public SaludEnum getSalud_animal() {
-        return this.salud_animal;
-    }
-
-    public void setSalud_animal(SaludEnum salud_animal) {
-        this.salud_animal = salud_animal;
-    }
-
-    public SexoEnum getSexo_animal() {
-        return this.sexo_animal;
-    }
-
-    public void setSexo_animal(SexoEnum sexo_animal) {
-        this.sexo_animal = sexo_animal;
-    }
-
-    public DisponibilidadEnum getDisponibilidad() {
-        return this.disponibilidad;
-    }
-
-    public void setDisponibilidad(DisponibilidadEnum disponibilidad) {
-        this.disponibilidad = disponibilidad;
-    }
-
-    
-
-
-    
     public Integer getId() {
         return this.id;
     }
@@ -127,7 +94,44 @@ public class Animal {
         this.img_url = img_url;
     }
 
+    public SaludEnum getSalud_animal() {
+        return this.salud_animal;
+    }
 
+    public void setSalud_animal(SaludEnum salud_animal) {
+        this.salud_animal = salud_animal;
+    }
 
-    
+    public SexoEnum getSexo_animal() {
+        return this.sexo_animal;
+    }
+
+    public void setSexo_animal(SexoEnum sexo_animal) {
+        this.sexo_animal = sexo_animal;
+    }
+
+    public DisponibilidadEnum getDisponibilidad() {
+        return this.disponibilidad;
+    }
+
+    public void setDisponibilidad(DisponibilidadEnum disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public Especie getEspecie() {
+        return this.especie;
+    }
+
+    public void setEspecie(Especie especie) {
+        this.especie = especie;
+    }
+
+    public Adopcion getAdopcion() {
+        return this.adopcion;
+    }
+
+    public void setAdopcion(Adopcion adopcion) {
+        this.adopcion = adopcion;
+    }
+
 }

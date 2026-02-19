@@ -1,10 +1,13 @@
 package com.adopciones.server.models;
 
 import java.sql.Date;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,16 +20,18 @@ public class Adopcion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Date fecha_adopcion;
 
+    // Relaciones
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "animal_id")
+    @OneToOne(mappedBy = "adopcion", cascade = CascadeType.ALL)
     private Animal animal;
 
-    private Date fecha_adopcion;
+    @OneToMany(mappedBy = "adopcion", fetch = FetchType.LAZY)
+    private List<Seguimiento> seguimientos = new ArrayList<>();
 
     public Integer getId() {
         return this.id;
@@ -36,7 +41,15 @@ public class Adopcion {
         this.id = id;
     }
 
-     public Usuario getUsuario() {
+    public Date getFecha_adopcion() {
+        return this.fecha_adopcion;
+    }
+
+    public void setFecha_adopcion(Date fecha_adopcion) {
+        this.fecha_adopcion = fecha_adopcion;
+    }
+
+    public Usuario getUsuario() {
         return this.usuario;
     }
 
@@ -44,7 +57,7 @@ public class Adopcion {
         this.usuario = usuario;
     }
 
-     public Animal getAnimal() {
+    public Animal getAnimal() {
         return this.animal;
     }
 
@@ -52,12 +65,12 @@ public class Adopcion {
         this.animal = animal;
     }
 
-    public Date getFecha_adopcion() {
-        return this.fecha_adopcion;
+    public List<Seguimiento> getSeguimientos() {
+        return this.seguimientos;
     }
 
-    public void setFecha_adopcion(Date fecha_adopcion) {
-        this.fecha_adopcion = fecha_adopcion;
+    public void setSeguimientos(List<Seguimiento> seguimientos) {
+        this.seguimientos = seguimientos;
     }
 
 }

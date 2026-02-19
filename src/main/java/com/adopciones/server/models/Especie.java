@@ -18,10 +18,11 @@ public class Especie {
     @NotBlank(message = "El nombre de la especie no puede estar vacío")
     private String nombre;
 
+    //Relaciones
     @OneToMany(mappedBy = "especie", cascade = CascadeType.ALL)
     private List<Animal> animales = new ArrayList<>();
 
-    @OneToMany(mappedBy = "raza", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "especie", cascade = CascadeType.ALL)
     private List<Raza> razas = new ArrayList<>();
 
     public List<Animal> getAnimales() {

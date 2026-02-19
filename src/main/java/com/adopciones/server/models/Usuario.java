@@ -1,15 +1,19 @@
 package com.adopciones.server.models;
 
 import java.sql.Date;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import com.adopciones.server.enums.RolEnum;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
 public class Usuario {
@@ -31,6 +35,38 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @JoinColumn(name = "rol", nullable = false)
     private RolEnum rol;
+
+    //Relaciones 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Adopcion> adopciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Cuenta> cuentas = new ArrayList<>();
+
+    public List<Cuenta> getCuentas() {
+        return this.cuentas;
+    }
+
+    public void setCuentas(List<Cuenta> cuentas) {
+        this.cuentas = cuentas;
+    }
+
+    public List<Adopcion> getAdopciones() {
+        return this.adopciones;
+    }
+
+    public void setAdopciones(List<Adopcion> adopciones) {
+        this.adopciones = adopciones;
+    }
+
+    public RolEnum getRol() {
+        return this.rol;
+    }
+
+    public void setRol(RolEnum rol) {
+        this.rol = rol;
+    }
+
 
     public Integer getId() {
         return this.id;

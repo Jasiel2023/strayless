@@ -18,6 +18,7 @@ public class Raza {
     @NotBlank(message = "El nombre de la raza no puede estar vacío")
     private String nombre;
 
+    //Relacion
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "especie_id")
     private Especie especie;
