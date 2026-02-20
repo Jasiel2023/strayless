@@ -28,17 +28,17 @@ public class Animal {
     @NotBlank(message = "El nombre del animal no puede estar vacío")
     private String nombre;
 
-    private Date fecha_llegada;
+    private Date fechaLlegada;
     private String informacion;
-    private String img_url;
+    private String imgUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "salud_animal", length = 10, nullable = false)
-    private SaludEnum salud_animal;
+    private SaludEnum saludAnimal;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "sexo_animal", length = 10, nullable = false)
-    private SexoEnum sexo_animal;
+    private SexoEnum sexoAnimal;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "disponibilidad", length = 10, nullable = false)
@@ -70,12 +70,12 @@ public class Animal {
         this.nombre = nombre;
     }
 
-    public Date getFecha_llegada() {
-        return this.fecha_llegada;
+    public Date getFechaLlegada() {
+        return this.fechaLlegada;
     }
 
-    public void setFecha_llegada(Date fecha_llegada) {
-        this.fecha_llegada = fecha_llegada;
+    public void setFechaLlegada(Date fechaLlegada) {
+        this.fechaLlegada = fechaLlegada;
     }
 
     public String getInformacion() {
@@ -86,28 +86,28 @@ public class Animal {
         this.informacion = informacion;
     }
 
-    public String getImg_url() {
-        return this.img_url;
+    public String getImgUrl() {
+        return this.imgUrl;
     }
 
-    public void setImg_url(String img_url) {
-        this.img_url = img_url;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
-    public SaludEnum getSalud_animal() {
-        return this.salud_animal;
+    public SaludEnum getSaludAnimal() {
+        return this.saludAnimal;
     }
 
-    public void setSalud_animal(SaludEnum salud_animal) {
-        this.salud_animal = salud_animal;
+    public void setSaludAnimal(SaludEnum saludAnimal) {
+        this.saludAnimal = saludAnimal;
     }
 
-    public SexoEnum getSexo_animal() {
-        return this.sexo_animal;
+    public SexoEnum getSexoAnimal() {
+        return this.sexoAnimal;
     }
 
-    public void setSexo_animal(SexoEnum sexo_animal) {
-        this.sexo_animal = sexo_animal;
+    public void setSexoAnimal(SexoEnum sexoAnimal) {
+        this.sexoAnimal = sexoAnimal;
     }
 
     public DisponibilidadEnum getDisponibilidad() {
