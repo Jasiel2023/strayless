@@ -9,7 +9,6 @@ import com.adopciones.server.models.Animal;
 import com.adopciones.server.models.Especie;
 import com.adopciones.ui.components.BotonPrimario;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -32,7 +31,6 @@ public class AnimalForm  extends FormLayout{
     TextField imgUrl = new TextField("Url de la Foto");
 
     BotonPrimario guardar = new BotonPrimario("Guardar", VaadinIcon.CHECK);
-    Button eliminar = new Button("Eliminar");
     Button cancelar = new Button("Cancelar");
 
     Binder<Animal> binder = new BeanValidationBinder<>(Animal.class);
@@ -49,7 +47,6 @@ public class AnimalForm  extends FormLayout{
 
         binder.bindInstanceFields(this);
 
-        eliminar.addThemeVariants(ButtonVariant.LUMO_ERROR);
         cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         
         guardar.addClickShortcut(Key.ENTER);
@@ -59,7 +56,7 @@ public class AnimalForm  extends FormLayout{
     }
 
     private HorizontalLayout crearLayoutBotones(){
-        return new HorizontalLayout(guardar, eliminar, cancelar);
+        return new HorizontalLayout(guardar,  cancelar);
     }
 
     public void setAnimal(Animal animal) {
@@ -67,7 +64,6 @@ public class AnimalForm  extends FormLayout{
     }
 
     public BotonPrimario getGuardarBtn(){return guardar;}
-    public Button getEliminarBtn(){return eliminar;}
     public Button getCancelarBtn(){return cancelar;}
     public Binder<Animal> getBinder(){return binder;}
 }

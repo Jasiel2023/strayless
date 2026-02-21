@@ -5,10 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.adopciones.server.enums.SaludEnum;
 import com.adopciones.server.models.Animal;
-import com.adopciones.server.enums.SexoEnum;
-import com.adopciones.server.enums.DisponibilidadEnum;
 import com.adopciones.server.repository.AnimalRepository;
 
 import jakarta.transaction.Transactional;

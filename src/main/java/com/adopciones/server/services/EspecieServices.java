@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.adopciones.server.models.Animal;
 import com.adopciones.server.models.Especie;
 import com.adopciones.server.repository.EspecieRepository;
 
