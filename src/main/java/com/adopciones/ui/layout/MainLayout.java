@@ -1,4 +1,5 @@
-package com.adopciones.base.ui;
+package com.adopciones.ui.layout;
+
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;

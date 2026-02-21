@@ -1,6 +1,7 @@
 package com.adopciones.server.services;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,25 @@ public class AnimalServices {
         }
 
         return animalRepository.save(animal);
+    }
 
+    public Animal updateAnimal(Animal animal){
+
+        if (animal.getId() == null ) {
+            throw new IllegalArgumentException("El ID del animal no puede ser nulo");
+        }
+        return animalRepository.save(animal);
+    }
+
+    public void deleteAnimal(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID del animal no puede ser nulo");
+        }
+        animalRepository.deleteById(id);
+    }
+
+    public List<Animal> getAllAnimals() {
+        return animalRepository.findAll();
     }
 
 }
