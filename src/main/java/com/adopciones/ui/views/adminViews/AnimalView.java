@@ -4,8 +4,9 @@ import com.adopciones.ui.components.BotonPeligro;
 import com.adopciones.ui.components.BotonPrimario;
 import com.adopciones.ui.components.BotonSecundario;
 import com.adopciones.ui.components.DialogoConfirmacion;
-import com.adopciones.ui.layout.MainLayout;
-
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -13,28 +14,41 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import com.adopciones.server.models.Animal;
+import com.adopciones.server.models.Especie;
+import com.adopciones.server.models.Raza;
 import com.adopciones.server.services.AnimalServices;
 import com.adopciones.server.services.EspecieServices;
-@Route(value = "admin/animales", layout = MainLayout.class)
+import com.adopciones.server.services.RazaServices;
+@Route(value = "admin/animales")
 @PageTitle("Gestion de Animales")
+@Menu(order = 0, icon = "vaadin:clipboard-check", title = "Animales")
 public class AnimalView extends VerticalLayout {
     
     private final Grid<Animal> grid = new Grid<>(Animal.class, false);
     private final AnimalServices animalService;
+    private final EspecieServices especieService;
+    private final RazaServices razaServices;
     private final AnimalForm form;
 
     private final BotonPrimario btnAgregar = new BotonPrimario("Registrar Animal", VaadinIcon.PLUS);
     private final BotonSecundario btnEditar = new BotonSecundario("Editar", VaadinIcon.EDIT);
     private final BotonPeligro btnEliminar = new BotonPeligro("Eliminar", VaadinIcon.TRASH);
 
-    public AnimalView(AnimalServices animalServices, EspecieServices especieServices) {
+    private final BotonSecundario btnAgregarEspecie = new BotonSecundario("Registrar Especie", VaadinIcon.PLUS_CIRCLE);
+    private final BotonSecundario btnAgregarRaza = new BotonSecundario("Registrar Raza", VaadinIcon.PLUS_CIRCLE);
 
+
+    public AnimalView(AnimalServices animalServices, EspecieServices especieServices, RazaServices razaServices) {
+        this.especieService = especieServices;
+        this.razaServices = razaServices;
         this.animalService = animalServices;
-        this.form = new AnimalForm(especieServices.getAllEspecies());
+        this.form = new AnimalForm(razaServices.getAllRazas());
         setSizeFull();
         configurarGrid();
         configurarFormulario();
@@ -58,7 +72,18 @@ public class AnimalView extends VerticalLayout {
         btnAgregar.addClickListener(e -> abrirFormularioVacio());
         btnEditar.addClickListener(e -> editarAnimalSeleccionado());
         btnEliminar.addClickListener(e -> confirmarEliminacion());
-        return new HorizontalLayout(btnAgregar, btnEditar, btnEliminar);
+
+        btnAgregarEspecie.addClickListener(e -> abrirModalNuevaEspecie());
+        btnAgregarRaza.addClickListener(e -> abrirModalNuevaRaza());
+
+        HorizontalLayout grupoAnimal = new HorizontalLayout(btnAgregar, btnEditar, btnEliminar);
+        HorizontalLayout grupoCatalogos = new HorizontalLayout(btnAgregarEspecie, btnAgregarRaza);
+
+        HorizontalLayout toolbar = new HorizontalLayout(grupoAnimal, grupoCatalogos);
+        toolbar.setWidthFull();
+        toolbar.setJustifyContentMode(JustifyContentMode.BETWEEN);
+        return toolbar;
+        
     }
 
     private void configurarGrid(){
@@ -143,6 +168,94 @@ public class AnimalView extends VerticalLayout {
         } else {
             Notification.show("Por favor, corrige los campos en rojo").addThemeVariants(NotificationVariant.LUMO_ERROR);
        }
+    }
+private void abrirModalNuevaEspecie() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Registrar Nueva Especie");
+
+        TextField txtNombre = new TextField("Nombre de la Especie");
+        txtNombre.setWidthFull();
+
+        BotonPrimario btnGuardar = new BotonPrimario("Guardar", VaadinIcon.CHECK);
+        Button btnCancelar = new Button("Cancelar", e -> dialog.close());
+
+        btnGuardar.addClickListener(e -> {
+            String valorIngresado = txtNombre.getValue();
+            
+            // Validamos que no sea nulo ni esté lleno de espacios en blanco
+            if (valorIngresado != null && !valorIngresado.trim().isEmpty()) {
+                try {
+                    Especie nuevaEspecie = new Especie();
+                    nuevaEspecie.setNombre(valorIngresado.trim()); // trim() quita espacios al inicio y final
+                    
+                    // Asegúrate de que este método esté bien escrito según tu Service
+                    especieService.createEspecie(nuevaEspecie); 
+                    
+                    form.actualizarEspecies(especieService.getAllEspecies());
+                    
+                    Notification.show("Especie guardada exitosamente").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    dialog.close();
+                } catch (Exception ex) {
+                    // SI FALLA ALGO EN LA BASE DE DATOS, LO VEREMOS AQUÍ
+                    Notification.show("Error interno al guardar: " + ex.getMessage())
+                                .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    ex.printStackTrace(); // Muestra el error en la consola de tu IDE (VSCode/Eclipse/IntelliJ)
+                }
+            } else {
+                Notification.show("El nombre no puede estar vacío").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+        });
+
+        dialog.add(new VerticalLayout(txtNombre));
+        dialog.getFooter().add(btnCancelar, btnGuardar);
+        dialog.open();
+    }
+
+    private void abrirModalNuevaRaza(){
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Registrar Nueva Raza");
+
+        TextField textNombre = new TextField("Nombre de la Raza");
+        textNombre.setWidthFull();
+
+        ComboBox<Especie> comboEspecies = new ComboBox<>("Selecciona la Especie");
+        comboEspecies.setItems(especieService.getAllEspecies());
+        comboEspecies.setItemLabelGenerator(Especie::getNombre);
+        comboEspecies.setWidthFull();
+
+
+        BotonPrimario btnGuardar = new BotonPrimario("Guardar", VaadinIcon.CHECK);
+        Button btnCancelar = new Button("Cancelar", e -> dialog.close());
+
+        btnGuardar.addClickListener(e -> {
+            String nombreRaza = textNombre.getValue();
+            Especie especieSeleccionada = comboEspecies.getValue();
+
+            if (especieSeleccionada == null) {
+                Notification.show("Por favor, selecciona una especie para la raza").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                return;
+
+            }
+
+            try {
+                 Raza nuevaRaza = new Raza();
+                nuevaRaza.setNombre(nombreRaza.trim());
+                nuevaRaza.setEspecie(comboEspecies.getValue());
+                razaServices.createRaza(nuevaRaza);
+               
+                 form.actualizarRazas(razaServices.getAllRazas());
+
+                Notification.show("Raza guardada Exitosamente");
+                dialog.close();
+            } catch (Exception ex) {
+                Notification.show("Error al guardar la raza: " + ex.getMessage())
+                            .addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+
+        });
+        dialog.add(new VerticalLayout(textNombre, comboEspecies));
+        dialog.getFooter().add(btnCancelar, btnGuardar);
+        dialog.open();
     }
 
     private void cerrarFormulario(){

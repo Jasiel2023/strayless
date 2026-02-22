@@ -7,6 +7,7 @@ import com.adopciones.server.enums.SaludEnum;
 import com.adopciones.server.enums.SexoEnum;
 import com.adopciones.server.models.Animal;
 import com.adopciones.server.models.Especie;
+import com.adopciones.server.models.Raza;
 import com.adopciones.ui.components.BotonPrimario;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -24,6 +25,7 @@ public class AnimalForm  extends FormLayout{
     
     TextField nombre = new TextField("Nombre del Animal");
     ComboBox<Especie> especie = new ComboBox<>("Especie");
+    ComboBox<Raza> raza = new ComboBox<>("Raza");
     ComboBox<SexoEnum> sexoAnimal = new ComboBox<>("Sexo");
     ComboBox<SaludEnum> saludAnimal = new ComboBox<>("Salud");
     ComboBox<DisponibilidadEnum> disponibilidad = new ComboBox<>("Disponibilidad");
@@ -35,11 +37,12 @@ public class AnimalForm  extends FormLayout{
 
     Binder<Animal> binder = new BeanValidationBinder<>(Animal.class);
 
-    public AnimalForm(List<Especie> especiesDisponibles) {
+    public AnimalForm(List<Raza> razasDisponibles) {
         addClassName("animal-form");
 
-        especie.setItems(especiesDisponibles);
-        especie.setItemLabelGenerator(Especie::getNombre);
+
+        raza.setItems(razasDisponibles);
+        raza.setItemLabelGenerator(Raza::getNombre);
 
         sexoAnimal.setItems(SexoEnum.values());
         saludAnimal.setItems(SaludEnum.values());
@@ -48,11 +51,11 @@ public class AnimalForm  extends FormLayout{
         binder.bindInstanceFields(this);
 
         cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        
+
         guardar.addClickShortcut(Key.ENTER);
         cancelar.addClickShortcut(Key.ESCAPE);  
 
-        add(nombre, especie, sexoAnimal, saludAnimal, disponibilidad, imgUrl, informacion, crearLayoutBotones());
+        add(nombre, raza, sexoAnimal, saludAnimal, disponibilidad, imgUrl, informacion, crearLayoutBotones());
     }
 
     private HorizontalLayout crearLayoutBotones(){
@@ -63,6 +66,13 @@ public class AnimalForm  extends FormLayout{
         binder.setBean(animal);
     }
 
+    public void actualizarEspecies(List<Especie> nuevasEspecies) {
+        this.especie.setItems(nuevasEspecies);
+    }
+
+    public void actualizarRazas(List<Raza> nuevasRazas) {
+        this.raza.setItems(nuevasRazas);
+    }
     public BotonPrimario getGuardarBtn(){return guardar;}
     public Button getCancelarBtn(){return cancelar;}
     public Binder<Animal> getBinder(){return binder;}

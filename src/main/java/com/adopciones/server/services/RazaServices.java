@@ -1,6 +1,9 @@
 package com.adopciones.server.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+
 
 import com.adopciones.server.models.Raza;
 import com.adopciones.server.repository.RazaRepository;
@@ -18,8 +21,8 @@ public class RazaServices {
 
     @Transactional
     public Raza createRaza(Raza raza) {
-        if (raza.getNombre() == null || raza.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre de la raza no puede estar vacío");
+        if (raza.getEspecie() == null || raza.getEspecie().getId() == null) {
+            throw new IllegalArgumentException("La especie no puede ser nula o tener ID nulo");
         }
         return razaRepository.save(raza);
     }
@@ -38,4 +41,9 @@ public class RazaServices {
         }
         razaRepository.deleteById(id);
     }
+
+     public List<Raza> getAllRazas() {
+        return razaRepository.findAll();
+    }
+
 }
