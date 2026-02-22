@@ -25,9 +25,6 @@ public class EspecieServices {
             throw new IllegalArgumentException("El nombre de la especie no puede estar vacío");
         }
 
-        if (especie.getRazas() == null || especie.getRazas().isEmpty()) {
-            throw new IllegalArgumentException("La especie debe tener al menos una raza");
-        }
         return especieRepository.save(especie);
     }
 

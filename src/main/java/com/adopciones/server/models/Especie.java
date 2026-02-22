@@ -23,19 +23,10 @@ public class Especie {
     private String nombre;
 
     //Relaciones
-    @OneToMany(mappedBy = "especie", cascade = CascadeType.ALL)
-    private List<Animal> animales = new ArrayList<>();
+   
 
     @OneToMany(mappedBy = "especie", cascade = CascadeType.ALL)
     private List<Raza> razas = new ArrayList<>();
-
-    public List<Animal> getAnimales() {
-        return this.animales;
-    }
-
-    public void setAnimales(List<Animal> animales) {
-        this.animales = animales;
-    }
 
     public List<Raza> getRazas() {
         return this.razas;

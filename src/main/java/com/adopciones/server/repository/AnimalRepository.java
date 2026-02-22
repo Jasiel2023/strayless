@@ -9,6 +9,6 @@ import com.adopciones.server.models.Animal;
 
 public interface AnimalRepository extends JpaRepository<Animal, Integer> {
     
-    @Query("SELECT a FROM Animal a JOIN FETCH a.especie")
+
     List<Animal> findAll();
 }

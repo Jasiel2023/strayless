@@ -90,7 +90,7 @@ public class AnimalView extends VerticalLayout {
         grid.setSizeFull();
 
         grid.addColumn(Animal:: getNombre).setHeader("Nombre").setSortable(true);
-        grid.addColumn(animal -> animal.getEspecie() != null ? animal.getEspecie().getNombre() : "N/A").setHeader("Especie");
+        grid.addColumn(animal -> animal.getRaza() != null ? animal.getRaza().getNombre() : "N/A").setHeader("Raza");
         grid.addColumn(Animal:: getDisponibilidad).setHeader("Estado");
 
         grid.addColumn(Animal::getSexoAnimal).setHeader("Sexo").setAutoWidth(true);

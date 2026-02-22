@@ -38,8 +38,9 @@ public class AnimalServices {
             throw new IllegalArgumentException("La disponibilidad del animal son obligatorios");
         }
 
-        if (animal.getEspecie() == null) {
-            throw new IllegalArgumentException("La especie del animal es obligatoria");
+        if (animal.getRaza() == null) {
+            throw new IllegalArgumentException("La raza del animal no puede ser nula");
+            
         }
 
         return animalRepository.save(animal);

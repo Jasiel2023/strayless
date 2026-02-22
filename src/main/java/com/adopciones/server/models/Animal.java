@@ -45,9 +45,9 @@ public class Animal {
     private DisponibilidadEnum disponibilidad;
 
     // Relaciones
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "especie_id")
-    private Especie especie;
+    @OneToOne
+    @JoinColumn(name = "raza_id")
+    private Raza raza;
 
     @OneToOne
     @JoinColumn(name = "adopcion_id")
@@ -118,12 +118,12 @@ public class Animal {
         this.disponibilidad = disponibilidad;
     }
 
-    public Especie getEspecie() {
-        return this.especie;
+    public Raza getRaza() {
+        return this.raza;
     }
 
-    public void setEspecie(Especie especie) {
-        this.especie = especie;
+    public void setRaza(Raza raza) {
+        this.raza = raza;
     }
 
     public Adopcion getAdopcion() {
