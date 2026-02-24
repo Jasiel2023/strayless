@@ -1,6 +1,8 @@
 package com.adopciones.server.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
+
+import org.hibernate.annotations.ManyToAny;
 
 import com.adopciones.server.enums.SaludEnum;
 import com.adopciones.server.enums.SexoEnum;
@@ -16,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 
@@ -28,7 +31,7 @@ public class Animal {
     @NotBlank(message = "El nombre del animal no puede estar vacío")
     private String nombre;
 
-    private Date fechaLlegada;
+    private LocalDate fechaLlegada;
     private String informacion;
     private String imgUrl;
 
@@ -45,7 +48,7 @@ public class Animal {
     private DisponibilidadEnum disponibilidad;
 
     // Relaciones
-    @OneToOne
+    @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "raza_id")
     private Raza raza;
 
@@ -70,11 +73,11 @@ public class Animal {
         this.nombre = nombre;
     }
 
-    public Date getFechaLlegada() {
+    public LocalDate getFechaLlegada() {
         return this.fechaLlegada;
     }
 
-    public void setFechaLlegada(Date fechaLlegada) {
+    public void setFechaLlegada(LocalDate fechaLlegada) {
         this.fechaLlegada = fechaLlegada;
     }
 

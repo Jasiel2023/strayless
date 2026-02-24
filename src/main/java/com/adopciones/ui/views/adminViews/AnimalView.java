@@ -25,11 +25,12 @@ import com.adopciones.server.models.Raza;
 import com.adopciones.server.services.AnimalServices;
 import com.adopciones.server.services.EspecieServices;
 import com.adopciones.server.services.RazaServices;
+
 @Route(value = "admin/animales")
 @PageTitle("Gestion de Animales")
 @Menu(order = 0, icon = "vaadin:clipboard-check", title = "Animales")
 public class AnimalView extends VerticalLayout {
-    
+
     private final Grid<Animal> grid = new Grid<>(Animal.class, false);
     private final AnimalServices animalService;
     private final EspecieServices especieService;
@@ -42,7 +43,6 @@ public class AnimalView extends VerticalLayout {
 
     private final BotonSecundario btnAgregarEspecie = new BotonSecundario("Registrar Especie", VaadinIcon.PLUS_CIRCLE);
     private final BotonSecundario btnAgregarRaza = new BotonSecundario("Registrar Raza", VaadinIcon.PLUS_CIRCLE);
-
 
     public AnimalView(AnimalServices animalServices, EspecieServices especieServices, RazaServices razaServices) {
         this.especieService = especieServices;
@@ -65,7 +65,7 @@ public class AnimalView extends VerticalLayout {
         cerrarFormulario();
     }
 
-    private HorizontalLayout getToolbar(){
+    private HorizontalLayout getToolbar() {
         btnEditar.setEnabled(false);
         btnEliminar.setEnabled(false);
 
@@ -83,20 +83,21 @@ public class AnimalView extends VerticalLayout {
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(JustifyContentMode.BETWEEN);
         return toolbar;
-        
+
     }
 
-    private void configurarGrid(){
+    private void configurarGrid() {
         grid.setSizeFull();
 
-        grid.addColumn(Animal:: getNombre).setHeader("Nombre").setSortable(true);
+        grid.addColumn(Animal::getNombre).setHeader("Nombre").setSortable(true);
         grid.addColumn(animal -> animal.getRaza() != null ? animal.getRaza().getNombre() : "N/A").setHeader("Raza");
-        grid.addColumn(Animal:: getDisponibilidad).setHeader("Estado");
+        grid.addColumn(animal -> animal.getRaza().getEspecie() != null ? animal.getRaza().getEspecie().getNombre() : "N/A").setHeader("Especie");
+        grid.addColumn(Animal::getDisponibilidad).setHeader("Estado");
 
         grid.addColumn(Animal::getSexoAnimal).setHeader("Sexo").setAutoWidth(true);
 
         grid.addColumn(Animal::getSaludAnimal).setHeader("Salud").setAutoWidth(true);
-        //grid.addColumn(Animal::getDisponibilidad).setHeader("Disponibilidad").setAutoWidth(true);
+
         grid.addColumn(Animal::getFechaLlegada).setHeader("Fecha de Llegada").setAutoWidth(true);
 
         grid.asSingleSelect().addValueChangeListener(event -> {
@@ -108,68 +109,67 @@ public class AnimalView extends VerticalLayout {
                 cerrarFormulario();
             }
         });
-        
+
     }
 
-    
-
-    private void configurarFormulario(){
+    private void configurarFormulario() {
 
         form.getGuardarBtn().addClickListener(e -> guardarAnimal());
         form.getCancelarBtn().addClickListener(e -> cerrarFormulario());
     }
 
-    private void abrirFormularioVacio(){
+    private void abrirFormularioVacio() {
         grid.asSingleSelect().clear();
         form.setAnimal(new Animal());
         form.setVisible(true);
     }
 
-    private void editarAnimalSeleccionado(){
+    private void editarAnimalSeleccionado() {
         Animal animalSeleccionado = grid.asSingleSelect().getValue();
         if (animalSeleccionado != null) {
             form.setAnimal(animalSeleccionado);
             form.setVisible(true);
         } else {
-            Notification.show("Por favor, selecciona un animal para editar").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Notification.show("Por favor, selecciona un animal para editar")
+                    .addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
     }
 
-    private void confirmarEliminacion(){
+    private void confirmarEliminacion() {
 
         Animal animal = grid.asSingleSelect().getValue();
-        if (animal == null) return;
+        if (animal == null)
+            return;
 
         DialogoConfirmacion dialogo = new DialogoConfirmacion(
-            "Eliminar Animal", "Estas seguro de eliminar a " + animal.getNombre() + "?",
-            () -> {
-                animalService.deleteAnimal(animal.getId());
-                actualizarGrid();
-                cerrarFormulario();
-                Notification.show("Animal eliminado").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            }
-        );
+                "Eliminar Animal", "Estas seguro de eliminar a " + animal.getNombre() + "?",
+                () -> {
+                    animalService.deleteAnimal(animal.getId());
+                    actualizarGrid();
+                    cerrarFormulario();
+                    Notification.show("Animal eliminado").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                });
         dialogo.open();
     }
 
-
     private void guardarAnimal() {
-       if (form.getBinder().isValid()) {
-        Animal animal = form.getBinder().getBean();
-        if (animal.getId() == null) {
-            animalService.createAnimal(animal);
-        } else {
-            animalService.updateAnimal(animal);
+        if (form.getBinder().isValid()) {
+            Animal animal = form.getBinder().getBean();
+            if (animal.getId() == null) {
+                animalService.createAnimal(animal);
+            } else {
+                animalService.updateAnimal(animal);
 
-       }
-        cerrarFormulario();
-        actualizarGrid();
-        Notification.show("Guardado Exitosamente").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            }
+            cerrarFormulario();
+            actualizarGrid();
+            Notification.show("Guardado Exitosamente").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         } else {
             Notification.show("Por favor, corrige los campos en rojo").addThemeVariants(NotificationVariant.LUMO_ERROR);
-       }
+        }
     }
-private void abrirModalNuevaEspecie() {
+
+    private void abrirModalNuevaEspecie() {
         Dialog dialog = new Dialog();
         dialog.setHeaderTitle("Registrar Nueva Especie");
 
@@ -181,24 +181,25 @@ private void abrirModalNuevaEspecie() {
 
         btnGuardar.addClickListener(e -> {
             String valorIngresado = txtNombre.getValue();
-            
+
             // Validamos que no sea nulo ni esté lleno de espacios en blanco
             if (valorIngresado != null && !valorIngresado.trim().isEmpty()) {
                 try {
                     Especie nuevaEspecie = new Especie();
                     nuevaEspecie.setNombre(valorIngresado.trim()); // trim() quita espacios al inicio y final
-                    
+
                     // Asegúrate de que este método esté bien escrito según tu Service
-                    especieService.createEspecie(nuevaEspecie); 
-                    
+                    especieService.createEspecie(nuevaEspecie);
+
                     form.actualizarEspecies(especieService.getAllEspecies());
-                    
-                    Notification.show("Especie guardada exitosamente").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                    Notification.show("Especie guardada exitosamente")
+                            .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                     dialog.close();
                 } catch (Exception ex) {
                     // SI FALLA ALGO EN LA BASE DE DATOS, LO VEREMOS AQUÍ
                     Notification.show("Error interno al guardar: " + ex.getMessage())
-                                .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                            .addThemeVariants(NotificationVariant.LUMO_ERROR);
                     ex.printStackTrace(); // Muestra el error en la consola de tu IDE (VSCode/Eclipse/IntelliJ)
                 }
             } else {
@@ -211,7 +212,7 @@ private void abrirModalNuevaEspecie() {
         dialog.open();
     }
 
-    private void abrirModalNuevaRaza(){
+    private void abrirModalNuevaRaza() {
         Dialog dialog = new Dialog();
         dialog.setHeaderTitle("Registrar Nueva Raza");
 
@@ -223,7 +224,6 @@ private void abrirModalNuevaEspecie() {
         comboEspecies.setItemLabelGenerator(Especie::getNombre);
         comboEspecies.setWidthFull();
 
-
         BotonPrimario btnGuardar = new BotonPrimario("Guardar", VaadinIcon.CHECK);
         Button btnCancelar = new Button("Cancelar", e -> dialog.close());
 
@@ -232,24 +232,25 @@ private void abrirModalNuevaEspecie() {
             Especie especieSeleccionada = comboEspecies.getValue();
 
             if (especieSeleccionada == null) {
-                Notification.show("Por favor, selecciona una especie para la raza").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                Notification.show("Por favor, selecciona una especie para la raza")
+                        .addThemeVariants(NotificationVariant.LUMO_ERROR);
                 return;
 
             }
 
             try {
-                 Raza nuevaRaza = new Raza();
+                Raza nuevaRaza = new Raza();
                 nuevaRaza.setNombre(nombreRaza.trim());
                 nuevaRaza.setEspecie(comboEspecies.getValue());
                 razaServices.createRaza(nuevaRaza);
-               
-                 form.actualizarRazas(razaServices.getAllRazas());
+
+                form.actualizarRazas(razaServices.getAllRazas());
 
                 Notification.show("Raza guardada Exitosamente");
                 dialog.close();
             } catch (Exception ex) {
                 Notification.show("Error al guardar la raza: " + ex.getMessage())
-                            .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        .addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
 
         });
@@ -258,17 +259,13 @@ private void abrirModalNuevaEspecie() {
         dialog.open();
     }
 
-    private void cerrarFormulario(){
+    private void cerrarFormulario() {
         form.setAnimal(null);
         form.setVisible(false);
     }
 
-    private void actualizarGrid(){
+    private void actualizarGrid() {
         grid.setItems(animalService.getAllAnimals());
     }
-
-
-
-
 
 }

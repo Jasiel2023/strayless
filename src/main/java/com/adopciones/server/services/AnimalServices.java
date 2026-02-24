@@ -1,6 +1,6 @@
 package com.adopciones.server.services;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class AnimalServices {
         }
 
         if (animal.getFechaLlegada() == null) {
-            animal.setFechaLlegada(new Date(System.currentTimeMillis()));
+            animal.setFechaLlegada(LocalDate.now());
         }
 
         if (animal.getSexoAnimal() == null || animal.getSaludAnimal() == null) {

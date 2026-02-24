@@ -1,6 +1,7 @@
 package com.adopciones.ui.views.adminViews;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.adopciones.server.enums.DisponibilidadEnum;
 import com.adopciones.server.enums.SaludEnum;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -29,6 +31,7 @@ public class AnimalForm  extends FormLayout{
     ComboBox<SexoEnum> sexoAnimal = new ComboBox<>("Sexo");
     ComboBox<SaludEnum> saludAnimal = new ComboBox<>("Salud");
     ComboBox<DisponibilidadEnum> disponibilidad = new ComboBox<>("Disponibilidad");
+    DatePicker fechaLlegada = new DatePicker("Fecha de Llegada");
     TextArea informacion = new TextArea("Información Adicional");
     TextField imgUrl = new TextField("Url de la Foto");
 
@@ -48,6 +51,8 @@ public class AnimalForm  extends FormLayout{
         saludAnimal.setItems(SaludEnum.values());
         disponibilidad.setItems(DisponibilidadEnum.values());
 
+        fechaLlegada.setLocale(Locale.of("es", "EC"));
+
         binder.bindInstanceFields(this);
 
         cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -55,7 +60,7 @@ public class AnimalForm  extends FormLayout{
         guardar.addClickShortcut(Key.ENTER);
         cancelar.addClickShortcut(Key.ESCAPE);  
 
-        add(nombre, raza, sexoAnimal, saludAnimal, disponibilidad, imgUrl, informacion, crearLayoutBotones());
+        add(nombre, raza, sexoAnimal, saludAnimal, disponibilidad, fechaLlegada, imgUrl, informacion, crearLayoutBotones());
     }
 
     private HorizontalLayout crearLayoutBotones(){
