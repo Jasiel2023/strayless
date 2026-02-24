@@ -8,7 +8,8 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -100,6 +101,28 @@ public class AnimalView extends VerticalLayout {
 
         grid.addColumn(Animal::getFechaLlegada).setHeader("Fecha de Llegada").setAutoWidth(true);
 
+        grid.addComponentColumn(animal -> {
+            String nombreArchivo = animal.getImgUrl();
+
+            if (nombreArchivo != null && !nombreArchivo.trim().isEmpty()) {
+                
+                String urlImagen = "/fotos-animales/" + nombreArchivo;
+
+                Image foto = new Image(urlImagen, "Foto de " + animal.getNombre());
+
+                foto.setWidth("60px");
+                foto.setHeight("60px");
+                foto.getStyle().set("border-radius", "8px");
+                foto.getStyle().set("object-fit", "cover");
+                return foto;
+            } else{
+                Span sinFoto = new Span("Sin Foto");
+                sinFoto.getStyle().set("color", "gray");
+                sinFoto.getStyle().set("font-style", "12px");
+                return sinFoto;
+            }
+        }).setHeader("Foto").setAutoWidth(true);
+        
         grid.asSingleSelect().addValueChangeListener(event -> {
             boolean haySeleccion = event.getValue() != null;
             btnEditar.setEnabled(haySeleccion);
@@ -114,7 +137,26 @@ public class AnimalView extends VerticalLayout {
 
     private void configurarFormulario() {
 
-        form.getGuardarBtn().addClickListener(e -> guardarAnimal());
+        form.getGuardarBtn().addClickListener(e -> {
+            try {
+                 Animal animalActual = form.getBinder().getBean();
+            String rutaFoto = form.getRutaImagenGuardada();
+            if (rutaFoto != null) {
+                animalActual.setImgUrl(rutaFoto);
+            }
+
+            if (form.getBinder().writeBeanIfValid(animalActual)) {
+                guardarAnimal();
+                form.limpiarRutaImagen();
+                actualizarGrid();
+                Notification.show("Guardado Exitosamente").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            }
+            } catch (Exception ex) {
+                Notification.show("Error al guardar: " + ex.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+
+           
+        });
         form.getCancelarBtn().addClickListener(e -> cerrarFormulario());
     }
 

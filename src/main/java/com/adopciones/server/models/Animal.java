@@ -2,7 +2,6 @@ package com.adopciones.server.models;
 
 import java.time.LocalDate;
 
-import org.hibernate.annotations.ManyToAny;
 
 import com.adopciones.server.enums.SaludEnum;
 import com.adopciones.server.enums.SexoEnum;
@@ -18,7 +17,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 

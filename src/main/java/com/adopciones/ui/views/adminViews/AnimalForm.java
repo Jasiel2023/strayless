@@ -1,7 +1,11 @@
 package com.adopciones.ui.views.adminViews;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import com.adopciones.server.enums.DisponibilidadEnum;
 import com.adopciones.server.enums.SaludEnum;
@@ -16,10 +20,14 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload; 
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 
@@ -33,7 +41,9 @@ public class AnimalForm  extends FormLayout{
     ComboBox<DisponibilidadEnum> disponibilidad = new ComboBox<>("Disponibilidad");
     DatePicker fechaLlegada = new DatePicker("Fecha de Llegada");
     TextArea informacion = new TextArea("Información Adicional");
-    TextField imgUrl = new TextField("Url de la Foto");
+
+    Upload uploadFoto = new Upload();
+    private String rutaImagenGuardada = null;
 
     BotonPrimario guardar = new BotonPrimario("Guardar", VaadinIcon.CHECK);
     Button cancelar = new Button("Cancelar");
@@ -60,7 +70,36 @@ public class AnimalForm  extends FormLayout{
         guardar.addClickShortcut(Key.ENTER);
         cancelar.addClickShortcut(Key.ESCAPE);  
 
-        add(nombre, raza, sexoAnimal, saludAnimal, disponibilidad, fechaLlegada, imgUrl, informacion, crearLayoutBotones());
+        //Configuracion Visual
+        uploadFoto.setAcceptedFileTypes("image/jpeg", "image/png", "image/webp");
+        uploadFoto.setMaxFiles(1);
+        uploadFoto.setDropLabel(new Span("Arrasta la foto del animal aqui o haz clic"));
+
+        uploadFoto.setReceiver((nombreOriginal, mimeType) -> {
+            try {
+                Path carpetaUploads = Paths.get("uploads/animales");
+                if (!Files.exists(carpetaUploads)) {
+                    Files.createDirectories(carpetaUploads);
+                }
+
+                String extension = nombreOriginal.substring(nombreOriginal.lastIndexOf("."));
+                String nuevoNombre = UUID.randomUUID().toString() + extension;
+
+                rutaImagenGuardada = nuevoNombre;
+
+                Path rutaArchivo = carpetaUploads.resolve(nuevoNombre);
+                return Files.newOutputStream(rutaArchivo);
+            } catch (Exception e) {
+                Notification.show("Error al preparar la ruta"  + e.getMessage());
+                return null;
+            }
+        });
+
+        uploadFoto.addSucceededListener(event -> {
+            Notification.show("Foto subida").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        });
+
+        add(nombre, raza, sexoAnimal, saludAnimal, disponibilidad, uploadFoto, informacion, crearLayoutBotones());
     }
 
     private HorizontalLayout crearLayoutBotones(){
@@ -81,4 +120,9 @@ public class AnimalForm  extends FormLayout{
     public BotonPrimario getGuardarBtn(){return guardar;}
     public Button getCancelarBtn(){return cancelar;}
     public Binder<Animal> getBinder(){return binder;}
+    public String getRutaImagenGuardada() { return rutaImagenGuardada; }
+    public void limpiarRutaImagen() { 
+        this.rutaImagenGuardada = null;
+        this.uploadFoto.clearFileList();
+      }
 }
