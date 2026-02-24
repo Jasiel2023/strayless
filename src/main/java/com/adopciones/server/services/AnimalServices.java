@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.adopciones.server.enums.DisponibilidadEnum;
 import com.adopciones.server.models.Animal;
 import com.adopciones.server.repository.AnimalRepository;
 
@@ -63,6 +64,10 @@ public class AnimalServices {
 
     public List<Animal> getAllAnimals() {
         return animalRepository.findAll();
+    }
+
+    public List<Animal> getAnimalsDisponibles() {
+        return animalRepository.findByDisponibilidad(DisponibilidadEnum.DISPONIBLE);
     }
 
 }
