@@ -1,6 +1,6 @@
 package com.adopciones.server.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class Adopcion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Date fecha_adopcion;
+    private LocalDate fechaAdopcion;
 
     // Relaciones
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,12 +42,12 @@ public class Adopcion {
         this.id = id;
     }
 
-    public Date getFecha_adopcion() {
-        return this.fecha_adopcion;
+    public LocalDate getFechaAdopcion() {
+        return this.fechaAdopcion;
     }
 
-    public void setFecha_adopcion(Date fecha_adopcion) {
-        this.fecha_adopcion = fecha_adopcion;
+    public void setFechaAdopcion(LocalDate fechaAdopcion) {
+        this.fechaAdopcion = fechaAdopcion;
     }
 
     public Usuario getUsuario() {
