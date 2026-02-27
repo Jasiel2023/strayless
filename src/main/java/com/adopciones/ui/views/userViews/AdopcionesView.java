@@ -1,17 +1,24 @@
 package com.adopciones.ui.views.userViews;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.adopciones.server.models.Animal;
+import com.adopciones.server.services.AdopcionServices;
 import com.adopciones.server.services.AnimalServices;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -23,9 +30,11 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 public class AdopcionesView extends VerticalLayout {
 
     private final AnimalServices animalService;
+    private final AdopcionServices adopcionService;
 
-    public AdopcionesView(AnimalServices animalService) {
+    public AdopcionesView(AnimalServices animalService, AdopcionServices adopcionService) {
         this.animalService = animalService;
+        this.adopcionService = adopcionService;
         
         // Estilos para la vista principal
         setSizeFull();
@@ -125,7 +134,7 @@ public class AdopcionesView extends VerticalLayout {
         // El botón no hace nada por ahora, pero le ponemos un mensaje visual
         btnAdoptar.addClickListener(e -> {
             // Futura lógica de adopción
-            com.vaadin.flow.component.notification.Notification.show("¡Próximamente: Proceso de adopción para " + animal.getNombre() + "!");
+            abrirModalReserva(animal);;
         });
 
         // Metemos los textos e info al layout interno
@@ -135,5 +144,61 @@ public class AdopcionesView extends VerticalLayout {
         carta.add(foto, infoLayout);
 
         return carta;
+    }
+
+    private void abrirModalReserva(Animal animal) {
+        // Aquí se abriría un diálogo/modal para confirmar la adopción
+        // y mostrar más detalles del proceso.
+
+        Dialog modal = new Dialog();
+        modal.setHeaderTitle("Acuerdo de Adopcion - " + animal.getNombre());
+        modal.setWidth("400px");
+
+        Paragraph textoAcuerdo = new Paragraph(
+        "Al continuar, me comprometo a brindar un hogar seguro, " +
+        "alimentación adecuada y atención veterinaria a " + animal.getNombre() + ". " +
+        "Entiendo que el refugio realizará un seguimiento de su bienestar."
+    );
+    textoAcuerdo.getStyle().set("font-size", "14px");
+    textoAcuerdo.getStyle().set("color", "gray");
+
+    Checkbox chekAcepto = new Checkbox("Acepto los términos del acuerdo de adopción");
+
+    DatePicker fechaRetiro = new DatePicker("Fecha estimada para retirar a " + animal.getNombre());
+    fechaRetiro.setMin(LocalDate.now()); // No pueden elegir fechas en el pasado
+    fechaRetiro.setWidthFull();
+
+    Button btnCancelar = new Button("Cancelar", e -> modal.close());
+    Button btnConfirmar = new Button("Confirmar Adopción");
+    btnConfirmar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+    btnConfirmar.setEnabled(false);
+    chekAcepto.addValueChangeListener(e -> btnConfirmar.setEnabled(e.getValue()));
+
+    btnConfirmar.addClickListener(e -> {
+        if (fechaRetiro.getValue() == null) {
+            Notification.show("Por favor, selecciona una fecha de retiro").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            return;
+        }
+
+        try {
+            adopcionService.crearReserva(animal, fechaRetiro.getValue());
+            modal.close();
+            Notification.show("Reserva confirmada! Te esperamos el "+ fechaRetiro.getValue()).
+            addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+            getUI.ifPresent(ui -> ui.getPage().reload()); // Redirige a la vista de mis adopciones
+        } catch (Exception ex) {
+            Notification.show(ex.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    });
+
+    modal.getFooter().add(btnCancelar, btnConfirmar);
+
+    VerticalLayout layoutModal = new VerticalLayout(textoAcuerdo, chekAcepto, fechaRetiro);
+    layoutModal.setPadding(false);
+    modal.add(layoutModal);
+
+    modal.open();
     }
 }
