@@ -1,6 +1,7 @@
 package com.adopciones.server.models;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,13 +18,21 @@ public class Seguimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String img_url;
+    private String imgUrl;
     private String observaciones;
-    private Date fecha_seguimiento;
+    private LocalDate fechaSeguimiento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adopcion_id")
     private Adopcion adopcion;
+
+    public Adopcion getAdopcion() {
+        return this.adopcion;
+    }
+
+    public void setAdopcion(Adopcion adopcion) {
+        this.adopcion = adopcion;
+    }
 
     public Integer getId() {
         return this.id;
@@ -33,12 +42,12 @@ public class Seguimiento {
         this.id = id;
     }
 
-    public String getImg_url() {
-        return this.img_url;
+    public String getImgUrl() {
+        return this.imgUrl;
     }
 
-    public void setImg_url(String img_url) {
-        this.img_url = img_url;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getObservaciones() {
@@ -49,12 +58,12 @@ public class Seguimiento {
         this.observaciones = observaciones;
     }
 
-    public Date getFecha_seguimiento() {
-        return this.fecha_seguimiento;
+    public LocalDate getFechaSeguimiento() {
+        return this.fechaSeguimiento;
     }
 
-    public void setFecha_seguimiento(Date fecha_seguimiento) {
-        this.fecha_seguimiento = fecha_seguimiento;
+    public void setFechaSeguimiento(LocalDate fechaSeguimiento) {
+        this.fechaSeguimiento = fechaSeguimiento;
     }
 
 }

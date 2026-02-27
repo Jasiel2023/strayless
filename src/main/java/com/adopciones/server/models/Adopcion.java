@@ -22,6 +22,9 @@ public class Adopcion {
     private Integer id;
 
     private LocalDate fechaAdopcion;
+    private LocalDate fechaRetiro;
+
+  
 
     // Relaciones
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,6 +75,14 @@ public class Adopcion {
 
     public void setSeguimientos(List<Seguimiento> seguimientos) {
         this.seguimientos = seguimientos;
+    }
+
+      public LocalDate getFechaRetiro() {
+        return this.fechaRetiro;
+    }
+
+    public void setFechaRetiro(LocalDate fechaRetiro) {
+        this.fechaRetiro = fechaRetiro;
     }
 
 }

@@ -9,7 +9,6 @@ import com.adopciones.server.models.Adopcion;
 import com.adopciones.server.models.Animal;
 import com.adopciones.server.repository.AdopcionRepository;
 import com.adopciones.server.repository.AnimalRepository;
-import com.vaadin.copilot.shaded.checkerframework.checker.units.qual.t;
 
 import jakarta.transaction.Transactional;
 
@@ -69,4 +68,23 @@ public class AdopcionServices {
         adopcionRepository.deleteById(id);
     }
 
+    @Transactional
+    public void crearReserva(Animal animal, LocalDate fechaRetiro/*, Usuario usuario */){
+
+        Animal animalBD = animalRepository.findById(animal.getId()).orElseThrow(()->
+            new IllegalArgumentException("El animal con ID " + animal.getId() + " no existe"));
+
+        if (animalBD.getDisponibilidad() != DisponibilidadEnum.DISPONIBLE) {
+            throw new IllegalArgumentException("El animal  no está disponible para reserva");
+        }
+
+        animalBD.setDisponibilidad(DisponibilidadEnum.RESERVADO);
+        animalRepository.save(animalBD);
+
+        Adopcion nuevaReserva = new Adopcion();
+        nuevaReserva.setAnimal(animalBD);
+        nuevaReserva.setFechaRetiro(fechaRetiro);
+        //nuevaReserva.setUsuario(usuario); // Asignar el usuario que hizo la reserva
+        adopcionRepository.save(nuevaReserva);
+    }
 }
