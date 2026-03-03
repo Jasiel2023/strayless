@@ -13,19 +13,15 @@ public class SeguimientoServices {
         this.seguimientoRepository = seguimientoRepository;
     }
 
-    @Transactional
-    public Seguimiento createSeguimiento(Seguimiento seguimiento) {
-
-        if (seguimiento.getAdopcion() == null && seguimiento.getFechaSeguimiento() == null && seguimiento.getImgUrl() == null) {
-            throw new IllegalArgumentException("Ningún campo del seguimiento puede ser nulo");
-        }
+   /* @Transactional
+    public Seguimiento createSeguimiento() {
 
 
+        Seguimiento seguimientoNew = new Seguimiento();
 
-        return seguimientoRepository.save(seguimiento);
 
 
-    }
+    }*/
 
     
     

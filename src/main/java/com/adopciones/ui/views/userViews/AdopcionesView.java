@@ -169,7 +169,7 @@ public class AdopcionesView extends VerticalLayout {
     fechaRetiro.setWidthFull();
 
     Button btnCancelar = new Button("Cancelar", e -> modal.close());
-    Button btnConfirmar = new Button("Confirmar Adopción");
+    Button btnConfirmar = new Button("Confirmar Reserva");
     btnConfirmar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
     btnConfirmar.setEnabled(false);
@@ -187,7 +187,7 @@ public class AdopcionesView extends VerticalLayout {
             Notification.show("Reserva confirmada! Te esperamos el "+ fechaRetiro.getValue()).
             addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
-            getUI.ifPresent(ui -> ui.getPage().reload()); // Redirige a la vista de mis adopciones
+            getUI().ifPresent(ui -> ui.getPage().reload()); // Redirige a la vista de mis adopciones
         } catch (Exception ex) {
             Notification.show(ex.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
